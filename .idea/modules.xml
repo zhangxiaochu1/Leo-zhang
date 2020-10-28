@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../20200913/.idea/20200913.iml" filepath="$PROJECT_DIR$/../20200913/.idea/20200913.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../BS_model/.idea/BS_model.iml" filepath="$PROJECT_DIR$/../BS_model/.idea/BS_model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Leo-zhang.iml" filepath="$PROJECT_DIR$/.idea/Leo-zhang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sklearn/.idea/deep_learn.iml" filepath="$PROJECT_DIR$/../sklearn/.idea/deep_learn.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/zhongxin_download/.idea/zhongxin_download.iml" filepath="$USER_HOME$/Desktop/zhongxin_download/.idea/zhongxin_download.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../out_code/.idea/外网code.iml" filepath="$PROJECT_DIR$/../out_code/.idea/外网code.iml" />
+    </modules>
+  </component>
+</project>
