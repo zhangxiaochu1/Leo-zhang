@@ -149,6 +149,10 @@ class BGCZ:
 
 
 if __name__ == '__main__':
+    choice = 'concat'
     xx = BGCZ()
-    xx.transform()
+    if choice == 'concat':
+        xx.concat_data()
+    else:
+        xx.transform()
     xx.load_pkl()
