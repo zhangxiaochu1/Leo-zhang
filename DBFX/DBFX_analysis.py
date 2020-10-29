@@ -21,12 +21,16 @@ class DBFX_Analysis:
         self.path = os.getcwd().replace('\\','/') + '/files'
         pass
 
-    def url_get(self):
-        url = r'http://f10.eastmoney.com/NewFinanceAnalysis/DubangAnalysisAjax?code={}'.format(self.stocks_id)
-        return url
+    def url_get(self,url_num):
+        if url_num == 1:
+            url_1 = r'http://f10.eastmoney.com/NewFinanceAnalysis/DubangAnalysisAjax?code={}'.format(self.stocks_id)
+            return url_1
+        else:
+            url_2 = r'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=0&code={}'.format(self.stocks_id)
+            return url_2
 
-    def get_html(self):
-        req = requests.get(self.url_get())
+    def get_html(self,url_num):
+        req = requests.get(self.url_get(url_num))
         if req.status_code == 200:
             print('[+] 网站链接成功。')
         else:
@@ -64,7 +68,10 @@ class DBFX_Analysis:
             df_xx.loc[21, today] = num['zzczzl']
             df_xx.loc[47, today] = num['zcfzl']
             df_xx.loc[50, today] = num['zcze']
-            df_xx.loc[51, today] = float(num['zcze'].replace('亿','').replace('万','')) / float(num['qycs'])
+            if '亿' in num['zcze']:
+                df_xx.loc[51, today] = '%.3f亿'%(float(num['zcze'].replace('亿','')) / float(num['qycs']))
+            elif '万' in num['zcze']:
+                df_xx.loc[51, today] = '%.3f亿'%(float(num['zcze'].replace('万', '')/10000) / float(num['qycs']))
             df_xx.loc[4, today] = num['jlr']
             df_xx.loc[20, today] = num['yysr']
             df_xx.loc[22, today] = num['yysr']
@@ -110,20 +117,43 @@ class DBFX_Analysis:
             df_xx.loc[19, today] = num['glfy']
         return df_xx
 
+    def ldfzzb(self):    # 流动负债占比
+        soup_xx = self.get_html(url_num = 2)
+        df_xx = pd.DataFrame(index = range(1,40))
+        index_values = [2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30,32,33,34,36,37,38,39]
+        df_xx.loc[[1,9,20,27,31,35],0] = ['每股指标','成长能力指标','盈利能力指标','盈利质量指标','运营能力指标','财务风险指标']
+        df_xx.loc[index_values,1] = ['基本每股收益(元)',
+                '扣非每股收益(元)','稀释每股收益(元)','每股净资产(元)','每股公积金(元)','每股未分配利润(元)','每股经营现金流(元)',
+                '营业总收入(元)','毛利润(元)','归属净利润(元)','扣非净利润(元)','营业总收入同比增长(%)','归属净利润同比增长(%)',
+                '扣非净利润同比增长(%)','营业总收入滚动环比增长(%)','归属净利润滚动环比增长(%)','扣非净利润滚动环比增长(%)',
+                '加权净资产收益率(%)','摊薄净资产收益率(%)','摊薄总资产收益率(%)','毛利率(%)','净利率(%)','实际税率(%)',
+                '预收款/营业收入','销售现金流/营业收入','经营现金流/营业收入','总资产周转率(次)','应收账款周转天数(天)',
+                '存货周转天数(天)','资产负债率(%)','流动负债/总负债(%)','流动比率','速动比率']
+        for num in soup_xx:
+            today = num['date']
+            df_xx.loc[index_values,today] = list(num.values())[1:]
+
+        return df_xx
+
+
+
+
 
     def dbfx(self):
-        soup_new = self.get_html()
+        soup_new = self.get_html(url_num = 1)
         if not os.path.exists(self.path):
             os.mkdir(self.path)
         df_0 = self.to_dataFrame(soup_new,'bgq')
         df_1 = self.to_dataFrame(soup_new,'nd')
+        df_2 = self.ldfzzb()
         writer = pd.ExcelWriter(self.path+'/{0}.xls'.format(self.stocks_id))
         df_0.to_excel(writer,'季报',index=False)
         df_1.to_excel(writer,'年报',index=False)
+        df_2.to_excel(writer, '主要指标', index=False)
         writer.save()
 
 
 if __name__ == '__main__':
-    stock = 'SZ000681'
+    stock = 'SZ300144'                      # 'SZ000681','SH600132'
     xx = DBFX_Analysis(stock)
     xx.dbfx()
