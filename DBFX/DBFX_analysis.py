@@ -10,6 +10,7 @@
 """
 
 import os
+import time
 import requests
 import pandas as pd
 from json import loads
@@ -17,9 +18,11 @@ from bs4 import BeautifulSoup as BS
 
 class DBFX_Analysis:
     def __init__(self,stocks_id):
-        self.stocks_id = stocks_id
+        if stocks_id[:2] == '60':
+            self.stocks_id = 'SH{}'.format(stocks_id)
+        else:
+            self.stocks_id = 'SZ{}'.format(stocks_id)
         self.path = os.getcwd().replace('\\','/') + '/files'
-        pass
 
     def url_get(self,url_num):
         if url_num == 1:
@@ -154,6 +157,14 @@ class DBFX_Analysis:
 
 
 if __name__ == '__main__':
-    stock = 'SZ300144'                      # 'SZ000681','SH600132'
-    xx = DBFX_Analysis(stock)
-    xx.dbfx()
+    stocks = '300124'                      # 'SZ000681','SH600132'
+    if type(stocks) == str:
+        print('[+] 正在汇总{0}信息。'.format(stocks))
+        xx = DBFX_Analysis(stocks)
+        xx.dbfx()
+    elif type(stocks) == list:
+        for stock in stocks:
+            print('[+] 正在汇总{0}信息。'.format(stock))
+            xx = DBFX_Analysis(stock)
+            xx.dbfx()
+            time.sleep(1)
