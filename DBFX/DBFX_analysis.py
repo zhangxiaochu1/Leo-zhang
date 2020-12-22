@@ -45,7 +45,7 @@ class DBFX_Analysis:
 
     def dataframe(self):
         df = pd.DataFrame(index=range(1,52))
-        df.loc[1,0] = '净资产收益率'
+        df.loc[1,0] = '加权净资产收益率'
         df.loc[[2,45,46],1] = ['总资产净利率','归属母公司股东的净利润占比','权益乘数']
         df.loc[[3,21,47,50,51],2] = ['营业净利润率','总资产周转率','资产负债率','资产总额','所有者权益总额']
         df.loc[[4,20,22,23,48,49],3] = ['净利润','营业总收入','营业总收入','资产总额','负债总额','资产总额']
@@ -74,7 +74,7 @@ class DBFX_Analysis:
             if '亿' in num['zcze']:
                 df_xx.loc[51, today] = '%.3f亿'%(float(num['zcze'].replace('亿','')) / float(num['qycs']))
             elif '万' in num['zcze']:
-                df_xx.loc[51, today] = '%.3f亿'%(float(num['zcze'].replace('万', '')/10000) / float(num['qycs']))
+                df_xx.loc[51, today] = '%.3f亿'%((float(num['zcze'].replace('万', ''))/10000) / float(num['qycs']))
             df_xx.loc[4, today] = num['jlr']
             df_xx.loc[20, today] = num['yysr']
             df_xx.loc[22, today] = num['yysr']
@@ -139,9 +139,6 @@ class DBFX_Analysis:
         return df_xx
 
 
-
-
-
     def dbfx(self):
         soup_new = self.get_html(url_num = 1)
         if not os.path.exists(self.path):
@@ -157,7 +154,7 @@ class DBFX_Analysis:
 
 
 if __name__ == '__main__':
-    stocks = '300124'                      # 'SZ000681','SH600132'
+    stocks = '000936'                      # 'SZ000681','SH600132'
     if type(stocks) == str:
         print('[+] 正在汇总{0}信息。'.format(stocks))
         xx = DBFX_Analysis(stocks)
